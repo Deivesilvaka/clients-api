@@ -14,6 +14,9 @@ Com o docker rodano, basta rodar os seguintes comandos.
 # docker
 $ docker compose up -d
 
+# build
+$ nest build
+
 # migrations
 $ npm run migration:run
 
