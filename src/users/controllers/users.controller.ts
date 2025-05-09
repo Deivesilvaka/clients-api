@@ -115,7 +115,7 @@ export class UsersController {
     return this.userService.findUsers();
   }
 
-  @Post('/favorites/:productId')
+  @Post('/favorite/:productId')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Save new favorite product to the current user!' })
   @ApiOkResponse({ description: STATUS_CODES[HttpStatus.OK] })
@@ -127,7 +127,7 @@ export class UsersController {
     return this.userService.saveProductAsFavorite(user.userId, productId);
   }
 
-  @Delete('/favorites/:externalProductId')
+  @Delete('/favorite/:externalProductId')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Save new favorite product to the current user!' })
   @ApiOkResponse({ description: STATUS_CODES[HttpStatus.OK] })
