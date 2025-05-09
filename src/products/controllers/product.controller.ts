@@ -26,12 +26,12 @@ export class ProductController {
     return this.productsService.getProducts();
   }
 
-  @Get(':productId')
+  @Get(':externalProductId')
   @Public()
   @ApiOperation({ summary: 'Get product by id' })
   @ApiOkResponse({ description: STATUS_CODES[HttpStatus.OK] })
   @ApiNotFoundResponse({ description: STATUS_CODES[HttpStatus.NOT_FOUND] })
-  async getProductById(@Param('productId') productId: number) {
+  async getProductById(@Param('externalProductId') productId: number) {
     return this.productsService.getProductById(productId);
   }
 }

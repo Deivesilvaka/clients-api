@@ -5,14 +5,11 @@ describe('encryptPassword', () => {
     const password = 'thisIsAIntrestingPassword';
     const hashedPassword = encryptPassword(password);
 
-    // Verifica se o hash tem 64 caracteres.
     expect(hashedPassword).toHaveLength(64);
 
-    // Verifica se a mesma senha gera sempre o mesmo hash.
     const hashedAgain = encryptPassword(password);
     expect(hashedPassword).toBe(hashedAgain);
 
-    // Verifica se senhas diferentes geram hashes diferentes.
     const differentPassword = 'anotherIntrestingPassword';
     const differentHash = encryptPassword(differentPassword);
     expect(hashedPassword).not.toBe(differentHash);

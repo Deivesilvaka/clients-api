@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersEntity } from '@src/users/entities/user.entity';
+import { ProductEntity } from '@src/products/entities/product.entity';
 import { CreateUserDto } from '@src/users/dtos/create-user.dto';
 import { Repository } from 'typeorm';
 
@@ -62,6 +63,43 @@ export class UserRepository {
   }
 
   async softDelete(id: string) {
-    await this.userRepository.softDelete(id);
+    const queryRunner =
+      this.userRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const exists = await queryRunner.query(
+        `SELECT product_id FROM user_favorite_products WHERE user_id = $1`,
+        [id],
+      );
+
+      if (exists.length > 0) {
+        await queryRunner.query(
+          `DELETE FROM user_favorite_products WHERE user_id = $1`,
+          [id],
+        );
+
+        // await queryRunner.query(
+        //   'UPDATE product SET deleted_at = $1 WHERE id = ANY($2)',
+        //   [
+        //     new Date(),
+        //     exists.map((product: { product_id: string }) => product.product_id),
+        //   ],
+        // );
+      }
+
+      await queryRunner.manager.softDelete(
+        ProductEntity,
+        exists.map((product: { product_id: string }) => product.product_id),
+      );
+      await queryRunner.manager.softDelete(UsersEntity, id);
+
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+        throw new InternalServerErrorException('Cannot delete product!');
+      }
+    }
   }
 }

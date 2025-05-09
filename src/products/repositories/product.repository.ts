@@ -57,15 +57,13 @@ export class ProductRepository {
 
     try {
       const exists = await queryRunner.query(
-        `SELECT 1 FROM user_favorite_products 
-             WHERE user_id = $1 AND product_id = $2`,
+        `SELECT 1 FROM user_favorite_products WHERE user_id = $1 AND product_id = $2`,
         [userId, productId],
       );
 
       if (exists.length > 0) {
         await queryRunner.query(
-          `DELETE FROM user_favorite_products 
-                 WHERE user_id = $1 AND product_id = $2`,
+          `DELETE FROM user_favorite_products WHERE user_id = $1 AND product_id = $2`,
           [userId, productId],
         );
       }

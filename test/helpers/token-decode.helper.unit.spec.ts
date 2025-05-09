@@ -52,7 +52,7 @@ describe('decodeJwtFromRequest', () => {
   });
 
   it('should throw UnauthorizedException if JWT_SECRET is undefined', () => {
-    delete process.env.JWT_SECRET; // Remove o secret para testar a falha
+    delete process.env.JWT_SECRET;
     const token = 'validToken';
     const req = mockRequest(`Bearer ${token}`);
 

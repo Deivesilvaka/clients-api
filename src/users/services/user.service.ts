@@ -47,7 +47,7 @@ export class UserService {
     const user = await this.userRepository.findUserById(userId);
 
     if (!user) {
-      throw new ConflictException('User not found');
+      throw new NotFoundException('User not found');
     }
 
     await this.userRepository.save({
