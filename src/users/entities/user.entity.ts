@@ -1,6 +1,6 @@
 import { BaseEntity } from '@src/shared/database/base.entity';
 import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
-import { Product } from '@src/products/entities/product.entity';
+import { ProductEntity } from '@src/products/entities/product.entity';
 
 @Entity('users')
 export class UsersEntity extends BaseEntity {
@@ -16,15 +16,15 @@ export class UsersEntity extends BaseEntity {
   @Column({ name: 'phone_number', type: 'varchar', nullable: false })
   phoneNumber: string;
 
-  @ManyToMany(() => Product, (product) => product.favoritedBy, {
+  @ManyToMany(() => ProductEntity, (product) => product.favoritedBy, {
     eager: true,
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
   @JoinTable({
     name: 'user_favorite_products',
-    joinColumns: [{ name: 'user_id' }],
-    inverseJoinColumns: [{ name: 'product_id' }],
+    joinColumn: { name: 'user_id' },
+    inverseJoinColumn: { name: 'product_id' },
   })
-  favoriteProducts?: Product[];
+  favoriteProducts?: ProductEntity[];
 }

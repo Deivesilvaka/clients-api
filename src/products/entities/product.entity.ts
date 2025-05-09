@@ -1,10 +1,10 @@
 import { Entity, Column, OneToOne, JoinColumn, ManyToMany } from 'typeorm';
-import { Rating } from '@src/products/entities/rating.entity';
+import { RatingEntity } from '@src/products/entities/rating.entity';
 import { BaseEntity } from '@src/shared/database/base.entity';
 import { UsersEntity } from '@src/users/entities/user.entity';
 
-@Entity()
-export class Product extends BaseEntity {
+@Entity('product')
+export class ProductEntity extends BaseEntity {
   @Column({ name: 'title' })
   title: string;
 
@@ -23,14 +23,14 @@ export class Product extends BaseEntity {
   @Column({ name: 'image' })
   image: string;
 
-  @OneToOne(() => Rating, {
+  @OneToOne(() => RatingEntity, {
     cascade: true,
     eager: true,
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
   @JoinColumn()
-  rating?: Rating;
+  rating?: RatingEntity;
 
   @ManyToMany(() => UsersEntity, (user) => user.favoriteProducts)
   favoritedBy?: UsersEntity[];

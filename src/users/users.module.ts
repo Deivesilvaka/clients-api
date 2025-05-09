@@ -6,16 +6,27 @@ import { UsersEntity } from '@src/users/entities/user.entity';
 import { UserService } from '@src/users/services/user.service';
 import { UserRepository } from '@src/users/repositories/users.repository';
 import { CreateUserMapper } from '@src/users/mappers/create-user.mapper';
+import { ProductProviderModule } from '@src/shared/providers/products/product.provider.module';
+import { ProductRepository } from '@src/products/repositories/product.repository';
+import { ProductEntity } from '@src/products/entities/product.entity';
+import { RatingEntity } from '@src/products/entities/rating.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UsersEntity])],
+  imports: [
+    TypeOrmModule.forFeature([UsersEntity, ProductEntity, RatingEntity]),
+    ProductProviderModule,
+  ],
   controllers: [UsersController],
   providers: [
     ThrottlerProvider,
-    { provide: 'userRepository', useClass: UserRepository },
+    { provide: 'UserRepository', useClass: UserRepository },
     CreateUserMapper,
     UserService,
+    {
+      provide: 'ProductRepository',
+      useClass: ProductRepository,
+    },
   ],
-  exports: [CreateUserMapper, 'userRepository'],
+  exports: [CreateUserMapper, 'UserRepository'],
 })
 export class UserModule {}

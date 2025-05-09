@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Inject,
   Injectable,
@@ -9,12 +10,20 @@ import { encryptPassword } from '@src/shared/helpers/password.helper';
 import { CreateUserMapper } from '@src/users/mappers/create-user.mapper';
 import { IUserRepository } from '@src/users/interfaces/user.repositoty.interface';
 import { UpdateUserDto } from '@src/users/dtos/update-user.dto';
+import { IProductProvider } from '@src/shared/providers/products/interfaces/product.interface';
+import { ProductEntity } from '@src/products/entities/product.entity';
+import { RatingEntity } from '@src/products/entities/rating.entity';
+import { IProductRepository } from '@src/products/interfaces/product.interface';
 
 @Injectable()
 export class UserService {
   constructor(
-    @Inject('userRepository')
+    @Inject('UserRepository')
     private readonly userRepository: IUserRepository,
+    @Inject('ProductProvider')
+    private readonly productProvider: IProductProvider,
+    @Inject('ProductRepository')
+    private readonly productRepository: IProductRepository,
     private readonly createUserMapper: CreateUserMapper,
   ) {}
   async createUser(createUserDto: CreateUserDto) {
@@ -102,5 +111,65 @@ export class UserService {
     await this.findUserById(userId);
 
     return this.userRepository.softDelete(userId);
+  }
+  async saveProductAsFavorite(userId: string, productId: number) {
+    const user = await this.findUserById(userId);
+
+    if (!user.favoriteProducts?.length) {
+      user.favoriteProducts = [];
+    }
+
+    const product = await this.productProvider.getProductById(productId);
+
+    if (!product) {
+      throw new NotFoundException('Product not found!');
+    }
+
+    const productExists = user.favoriteProducts.find(
+      (userProduct) => userProduct.externalProductId === product.id,
+    );
+
+    if (productExists) {
+      throw new BadRequestException('Product already saved!');
+    }
+
+    const rating: Partial<RatingEntity> = product.rating;
+
+    const { id, title, description, price, category, image } = product;
+
+    const productToSave: Partial<ProductEntity> = {
+      externalProductId: id,
+      title,
+      description,
+      price,
+      category,
+      image,
+      rating: (rating ? rating : undefined) as RatingEntity,
+    };
+
+    user.favoriteProducts.push(productToSave as ProductEntity);
+
+    await this.productRepository.saveFavorite(productToSave, userId);
+
+    return this.findUserById(userId);
+  }
+
+  async removeProductAsFavorite(userId: string, productId: string) {
+    const user = await this.findUserById(userId);
+
+    const product = user.favoriteProducts?.find(
+      (product) => product.id === productId,
+    );
+
+    if (!product) {
+      throw new NotFoundException('Product not found!');
+    }
+
+    const reponse = await this.productRepository.removeFavoriteProduct(
+      userId,
+      productId,
+    );
+
+    return { productId: reponse };
   }
 }

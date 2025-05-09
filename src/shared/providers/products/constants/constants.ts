@@ -1,0 +1,1 @@
+export const CLOUDFLARE_STATUS_ERROR = 520;

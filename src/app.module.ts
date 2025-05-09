@@ -8,6 +8,7 @@ import { ThrottlerProvider } from '@src/shared/providers/throttler/throttler.pro
 import { UserModule } from '@src/users/users.module';
 import { AuthModule } from '@src/auth/auth.module';
 import { JWTProvider } from '@src/shared/providers/jwt/jwt.provider';
+import { ProductModule } from '@src/products/products.module';
 
 @Module({
   imports: [
@@ -24,8 +25,9 @@ import { JWTProvider } from '@src/shared/providers/jwt/jwt.provider';
         limit: 30,
       },
     ]),
-    UserModule,
     AuthModule,
+    ProductModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [ThrottlerProvider, JWTProvider],

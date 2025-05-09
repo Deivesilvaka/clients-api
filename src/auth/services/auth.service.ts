@@ -8,7 +8,7 @@ import { IUserRepository } from '@src/users/interfaces/user.repositoty.interface
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject('userRepository')
+    @Inject('UserRepository')
     private readonly userRepository: IUserRepository,
     private readonly userMapper: CreateUserMapper,
     private readonly jwtService: JwtService,

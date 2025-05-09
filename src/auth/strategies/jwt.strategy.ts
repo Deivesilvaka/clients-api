@@ -8,7 +8,7 @@ ConfigModule.forRoot();
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    @Inject('userRepository')
+    @Inject('UserRepository')
     private readonly userRepository: IUserRepository,
   ) {
     super({

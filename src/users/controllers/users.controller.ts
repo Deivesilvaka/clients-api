@@ -114,4 +114,28 @@ export class UsersController {
   async findUsers() {
     return this.userService.findUsers();
   }
+
+  @Post('/favorites/:productId')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Save new favorite product to the current user!' })
+  @ApiOkResponse({ description: STATUS_CODES[HttpStatus.OK] })
+  @ApiNotFoundResponse({ description: STATUS_CODES[HttpStatus.NOT_FOUND] })
+  async addFavoiteProduct(
+    @CurrentUser() user: { userId: string },
+    @Param('productId') productId: number,
+  ) {
+    return this.userService.saveProductAsFavorite(user.userId, productId);
+  }
+
+  @Delete('/favorites/:externalProductId')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Save new favorite product to the current user!' })
+  @ApiOkResponse({ description: STATUS_CODES[HttpStatus.OK] })
+  @ApiNotFoundResponse({ description: STATUS_CODES[HttpStatus.NOT_FOUND] })
+  async removeFavoiteProduct(
+    @CurrentUser() user: { userId: string },
+    @Param('externalProductId', new ParseUUIDPipe()) productId: string,
+  ) {
+    return this.userService.removeProductAsFavorite(user.userId, productId);
+  }
 }
