@@ -78,14 +78,6 @@ export class UserRepository {
           `DELETE FROM user_favorite_products WHERE user_id = $1`,
           [id],
         );
-
-        // await queryRunner.query(
-        //   'UPDATE product SET deleted_at = $1 WHERE id = ANY($2)',
-        //   [
-        //     new Date(),
-        //     exists.map((product: { product_id: string }) => product.product_id),
-        //   ],
-        // );
       }
 
       await queryRunner.manager.softDelete(
