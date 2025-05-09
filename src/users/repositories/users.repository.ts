@@ -90,7 +90,7 @@ export class UserRepository {
     } catch (err) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
-        throw new InternalServerErrorException('Cannot delete product!');
+        throw new InternalServerErrorException('Cannot delete!');
       }
     }
   }
